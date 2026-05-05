@@ -1,4 +1,9 @@
 1.Describe the most complex ML model inference you have run. Include details on the compute stack you used and any optimizations you made.
   In my current role, I worked on a real-time market risk prediction system where we had to run a transformer-based model on streaming data with very tight latency requirements. The challenge was that initial inference times were too high for production use, especially during peak market hours. I took ownership of optimizing the inference layer by moving the model to GPU-backed AWS instances and converting it to ONNX, then using TensorRT to reduce execution overhead. I also reworked the API layer using FastAPI with asynchronous handling and introduced micro-batching to balance latency and throughput. After these changes, we were consistently getting sub-second responses even under load, and the system became stable enough to support real-time decision workflows.
+
+
+
+
+  
 2.What's the most pain you've faced running production systems? What's an interesting change you made to increase resilience or uptime?
   One of the hardest production issues I dealt with was a real-time inference service that would randomly become unstable during market spikes latency would jump from milliseconds to seconds, and a small percentage of requests would just fail. It wasn’t obvious at first because everything looked fine in normal conditions. I spent time digging through logs and metrics and realized the system was getting overwhelmed during sudden traffic bursts, with no proper back pressure or isolation between components. I ended up introducing a lightweight queue in front of the service to smooth traffic, added strict timeouts and retries, and implemented a circuit breaker so failures wouldn’t cascade. I also split the inference service into a separate, autoscaled component. After that, the system handled spikes much more predictably, and we stopped seeing those random failures in production.
